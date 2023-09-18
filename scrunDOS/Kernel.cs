@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cosmos.Core.IOGroup;
+using Cosmos.System.Graphics;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.IO;
@@ -10,28 +12,202 @@ namespace scrunDOS
 {
     public class Kernel : Sys.Kernel
     {
-        public string UserName = "USER";
+        public string UserName = "user";
         public string Input = "";
         public string SavedText;
+        public Canvas canvas;
         protected override void BeforeRun()
         {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
 
             Console.Clear();
-
-            Console.Beep(37, 1);
 
             Console.WriteLine("Welcome to scrunDOS.");
             Console.WriteLine("What should I call you?");
             UserName = Console.ReadLine();
-            Input = "p"; HandleCommands();
+            if (UserName == ";")
+            {
+                UserName = "user";
+                Console.BackgroundColor = ConsoleColor.Black; 
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Clear(); Console.WriteLine("Ignoring user setup and launching terminal...");
+            }
+            else
+            {
+                Input = "p"; HandleCommands();
+            }
         }
 
         protected override void Run()
         {
             Input = Console.ReadLine();
             HandleCommands();
+        }
+
+        public void HandlePortal()
+        {
+            Console.Clear();
+            Console.WriteLine("-SCRUNDOS : PORTAL : " + UserName.ToUpper() + "-");
+            Console.WriteLine(new String('-', Console.WindowWidth - 1));
+            Console.WriteLine("Welcome to the Portal, " + UserName + "!");
+            Console.WriteLine("You can exit the terminal by typing 'p' into the console.");
+            Console.WriteLine("");
+            Console.WriteLine("Directories:");
+            Console.WriteLine("+ Accessories");
+            Console.WriteLine("+ Control Panel");
+            Console.WriteLine("+ System Tools");
+            Console.WriteLine("");
+            Console.WriteLine("Type the name of the directory you want to access, then hit enter.");
+            Console.WriteLine("");
+            string pi = Console.ReadLine();
+            if (pi == "Accessories")
+            {
+                HandleAccessories();
+            }
+            else if (pi == "Control Panel")
+            {
+                HandleControl();
+            }
+            else if (pi == "System Tools")
+            {
+                HandleSystemTools();
+            }
+            else if (pi == "lock")
+            {
+                Console.WriteLine("Enter a passphrase:");
+                string pass = Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine("-THIS SYSTEM HAS BEEN LOCKED-");
+                Console.WriteLine(new String('-', Console.WindowWidth - 1));
+                Console.WriteLine("Please enter the unlock passphrase. You have 2 attempts");
+                string gpass = Console.ReadLine();
+                if (gpass == pass)
+                {
+                    HandlePortal();
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect guess. You have 1 attempt remaining.");
+                    gpass = Console.ReadLine();
+                    if (gpass == pass)
+                    {
+                        HandlePortal();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Incorrect guess. You have no attempts remaining.");
+                        Console.WriteLine("The system will now be disabled for 10 minutes.");
+                        System.Threading.Thread.Sleep(600000);
+                        Console.WriteLine("The system has been re-enabled.");
+                    }
+                }
+            }
+            else
+            {
+                HandlePortal();
+            }
+        }
+
+        public void HandleAccessories()
+        {
+            Console.Clear();
+            Console.WriteLine("-SCRUNDOS : PORTAL : " + UserName.ToUpper() + "-");
+            Console.WriteLine(new String('-', Console.WindowWidth - 1));
+            Console.WriteLine("You are in a directory, " + UserName + ".");
+            Console.WriteLine("To go back to the portal, enter 'back' into the console.");
+            Console.WriteLine("");
+            Console.WriteLine("Directories:");
+            Console.WriteLine("- Accessories");
+            Console.WriteLine("str");
+            Console.WriteLine("+ Control Panel");
+            Console.WriteLine("+ System Tools");
+            Console.WriteLine("");
+            Console.WriteLine("Type the name of the applet you want to access, then hit enter.");
+            Console.WriteLine("");
+            string pia = Console.ReadLine();
+            if (pia == "str")
+            {
+                Input = "str";
+                HandleCommands();
+            }
+            else if (pia == "back")
+            {
+                HandlePortal();
+            }
+            else
+            {
+                HandleAccessories();
+            }
+        }
+        public void HandleControl()
+        {
+            Console.Clear();
+            Console.WriteLine("-SCRUNDOS : PORTAL : " + UserName.ToUpper() + "-");
+            Console.WriteLine(new String('-', Console.WindowWidth - 1));
+            Console.WriteLine("You are in a directory, " + UserName + ".");
+            Console.WriteLine("To go back to the portal, enter 'back' into the console.");
+            Console.WriteLine("");
+            Console.WriteLine("Directories:");
+            Console.WriteLine("+ Accessories");
+            Console.WriteLine("- Control Panel");
+            Console.WriteLine("themer");
+            Console.WriteLine("sesh");
+            Console.WriteLine("+ System Tools");
+            Console.WriteLine("");
+            Console.WriteLine("Type the name of the applet you want to access, then hit enter.");
+            Console.WriteLine("");
+            string picp = Console.ReadLine();
+            if (picp == "themer")
+            {
+                Input = "themer";
+                HandleCommands();
+            }
+            else if (picp == "sesh")
+            {
+                Input = "sesh";
+                HandleCommands();
+            }
+            else if (picp == "back")
+            {
+                HandlePortal();
+            }
+            else
+            {
+                HandleControl();
+            }
+
+        }
+        public void HandleSystemTools()
+        {
+            Console.Clear();
+            Console.WriteLine("-SCRUNDOS : PORTAL : " + UserName.ToUpper() + "-");
+            Console.WriteLine(new String('-', Console.WindowWidth - 1));
+            Console.WriteLine("You are in a directory, " + UserName + ".");
+            Console.WriteLine("To go back to the portal, enter 'back' into the console.");
+            Console.WriteLine("");
+            Console.WriteLine("Directories:");
+            Console.WriteLine("+ Accessories");
+            Console.WriteLine("+ Control Panel");
+            Console.WriteLine("- System Tools");
+            Console.WriteLine("term");
+            Console.WriteLine("");
+            Console.WriteLine("Type the name of the applet you want to access, then hit enter.");
+            Console.WriteLine("");
+            string pist = Console.ReadLine();
+            if (pist == "term")
+            {
+                Input = "cls";
+                HandleCommands();
+            }
+            else if (pist == "back")
+            {
+                HandlePortal();
+            }
+            else
+            {
+                HandleSystemTools();
+            }
         }
 
         public void HandleCommands()
@@ -43,28 +219,12 @@ namespace scrunDOS
 
             else if (Input == "p")
             {
-                
-                Console.Clear();
-                Console.WriteLine("-SCRUNDOS : PORTAL : " + UserName.ToUpper() + "-");
-                Console.WriteLine("Welcome to the Portal, " + UserName + "!");
-                Console.WriteLine("You can access this menu if you are lost by entering 'P' into the console.");
-                Console.WriteLine("You can also enter 'P' to refresh the Portal if it gets filled with commands.");
-                Console.WriteLine("");
-                Console.WriteLine("Commands & applets:");
-                Console.WriteLine("");
-                Console.WriteLine("cls - Clear screen");
-                Console.WriteLine("inforep - System information");
-                Console.WriteLine("str - Save text to RAM");
-                Console.WriteLine("pfr - Print text stored in RAM");
-                Console.WriteLine("rfr - Run text stored in RAM as if it were a command");
-                Console.WriteLine("themer - Change themes for current session");
-                Console.WriteLine("sesh - Change username for current session");
-                Console.WriteLine("");
+                HandlePortal();
             }
 
             else if (Input == "inforep")
             {
-                Console.WriteLine("You are currently running scrunDOS 1");
+                Console.WriteLine("You are currently running scrunDOS 2");
                 Console.WriteLine("This product is provided for free of charge by scrundaegames.");
                 Console.WriteLine("If you paid for this product, you got scammed and should demand");
                 Console.WriteLine("your money back.");
@@ -183,7 +343,10 @@ namespace scrunDOS
             {
                 Sys.Power.Reboot();
             }
-
+            else if (Input == "add")
+            {
+                
+            }
             else
             {
                 Console.WriteLine("Unknown command.");
